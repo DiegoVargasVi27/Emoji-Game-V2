@@ -51,23 +51,32 @@ Presentation → Application → Domain ← Infrastructure
 
 - **Domain layer** is pure TypeScript with zero external dependencies. All game logic lives here.
 - **Application layer** orchestrates use cases, calling domain services and repositories via ports (interfaces).
-- **Infrastructure layer** implements ports: localStorage adapter, emoji catalog data provider.
+- **Infrastructure layer** implements ports: localStorage adapters, seeded challenge generator, emoji catalog data provider.
 - **Presentation layer** is React components + custom hooks. Components are dumb; hooks bridge to use cases.
+
+### Dependency injection
+Manual constructor injection in `main.tsx` (composition root). No DI framework — dependencies are wired explicitly at app startup and passed to use cases.
 
 ### Daily challenge algorithm (no backend)
 A deterministic seed is derived from the ISO date string (`YYYY-MM-DD`). A seeded PRNG (mulberry32 or similar, ~10 lines) uses that seed to:
 1. Pick one category from the catalog.
-2. Pick 5 emojis from that category without repetition.
+2. Pick 5 **unique** emojis from that category (no repeats in the answer).
 
-This is computed client-side. The catalog is a static JSON file bundled with the app.
+This is computed client-side. The catalog is a static JSON file bundled with the app. The implementation lives in infrastructure behind the `IChallengeGenerator` port.
 
 ### State management
-Zustand store holds the in-memory game state (current attempts, keyboard state, modal visibility). On every mutation, the infrastructure repository writes to localStorage. On app load, the use case reads from localStorage to rehydrate.
+Zustand store holds the in-memory game state (current attempts, current guess being assembled, keyboard state, modal visibility). On every mutation, the infrastructure repository writes to localStorage. On app load, the use case reads from localStorage to rehydrate.
 
 ### Feedback algorithm (GuessEvaluator)
 Mirrors Wordle's multi-pass algorithm:
 1. First pass: mark exact matches (correct).
 2. Second pass: for remaining tiles, mark misplaced if emoji exists elsewhere in the answer (accounting for frequency — an emoji appearing twice in the answer can only be yellow/green twice total).
+
+Note: Answers are always 5 unique emojis, but player guesses CAN have repeats. The frequency-counting evaluator handles this correctly (a repeated emoji in a guess against a unique answer will get at most one green/yellow).
+
+### Presentation-layer state concepts
+- **`CurrentGuess`**: Presentation-only state representing the emojis the player is assembling before submission (0–5 emojis in the current row). This is NOT part of the domain — it only exists in the Zustand store / UI state.
+- **Keyboard hints**: Derived/computed state in `GameStateMapper` from all previous guesses. Each emoji key shows the best result it achieved across all attempts (correct > misplaced > absent > unknown). This is a pure mapping, not stored in domain.
 
 ---
 
@@ -77,15 +86,23 @@ Mirrors Wordle's multi-pass algorithm:
 
 | Name | Fields | Invariants |
 |------|--------|------------|
-| `Emoji` | `code: string`, `name: string`, `category: CategoryId` | code non-empty, name non-empty |
+| `Emoji` | `code: string`, `name: string` | code non-empty, name non-empty |
 | `CategoryId` | `value: string` | non-empty, slug format |
 | `EmojiCategory` | `id: CategoryId`, `name: string`, `emojis: Emoji[]` | min 5 emojis (need at least a full sequence) |
-| `EmojiSequence` | `emojis: readonly Emoji[5]` | exactly 5 elements, emojis may repeat |
+| `EmojiSequence` | `emojis: readonly Emoji[5]` | exactly 5 elements; emojis may repeat in player guesses (answers are always unique) |
 | `TileResult` | `'correct' \| 'misplaced' \| 'absent'` | union type (enum-like VO) |
 | `GuessResult` | `tiles: readonly TileResult[5]` | exactly 5 tiles |
 | `Guess` | `sequence: EmojiSequence`, `result: GuessResult` | both required |
 | `GameStatus` | `'playing' \| 'won' \| 'lost'` | union type |
 | `GameDate` | `value: string` | ISO date `YYYY-MM-DD`, valid date |
+| `PlayerStats` | `gamesPlayed: number`, `gamesWon: number`, `currentStreak: number`, `bestStreak: number`, `lastPlayedDate: GameDate \| null`, `guessDistribution: Record<1\|2\|3\|4\|5\|6, number>` | all counts >= 0, bestStreak >= currentStreak |
+
+`PlayerStats` method:
+```typescript
+recordResult(date: GameDate, outcome: 'won' | 'lost', attemptsUsed: number): PlayerStats
+```
+- Pure function — returns a new `PlayerStats` instance.
+- Streak logic: if `lastPlayedDate` is yesterday (UTC), maintain/increment streak; if `lastPlayedDate` is older (or null), reset streak to 0 (or 1 if won). If won, increments `guessDistribution[attemptsUsed]`.
 
 ### Aggregate Root
 
@@ -105,7 +122,7 @@ Invariants:
 - Cannot add attempts when status !== 'playing'
 
 Methods:
-- `submitGuess(sequence: EmojiSequence, evaluator: GuessEvaluator): Game` — returns new immutable Game
+- `submitGuess(sequence: EmojiSequence): Game` — evaluates the guess internally using `GuessEvaluator.evaluate()` and returns a new immutable Game instance. The Game aggregate imports the domain service directly (no injected evaluator).
 
 ### Domain Services
 
@@ -116,13 +133,13 @@ evaluate(guess: EmojiSequence, answer: EmojiSequence): GuessResult
 - Pure function, no side effects, no dependencies
 - Implements two-pass Wordle algorithm with frequency counting
 
-**`DailyChallengeGenerator`**
+**`generateShareText`**
 ```typescript
-generate(date: GameDate, catalog: EmojiCategory[]): { category: EmojiCategory; answer: EmojiSequence }
+generateShareText(game: Game): string
 ```
-- Uses mulberry32 seeded PRNG from date string hash
-- Deterministic: same date always yields same result
-- Picks category index, then 5 unique emojis from that category
+- Pure domain function that reads the game's attempts and produces the emoji grid string (e.g., rows of 🟩🟨⬛ characters).
+- Returns the formatted share string including game date and attempt count.
+- Clipboard interaction is NOT here — that stays in the presentation layer.
 
 ### Ports (Interfaces)
 
@@ -132,9 +149,16 @@ save(game: Game): void
 loadByDate(date: GameDate): Game | null
 ```
 
-**`IEmojiCatalogProvider`**
+**`IChallengeGenerator`**
 ```typescript
-getCategories(): EmojiCategory[]
+generate(date: GameDate): { category: EmojiCategory; answer: EmojiSequence }
+```
+Implementation (`SeededChallengeGenerator`) lives in infrastructure. Uses mulberry32 seeded PRNG from DJB2 date string hash, Fisher-Yates shuffle to pick 5 unique emojis from the selected category.
+
+**`IStatsRepository`**
+```typescript
+load(): PlayerStats
+save(stats: PlayerStats): void
 ```
 
 ---
@@ -173,24 +197,27 @@ P:\Emoji-Game-V2\
 │   │   │   ├── Guess.ts                 # Guess VO
 │   │   │   ├── GameStatus.ts            # GameStatus union
 │   │   │   ├── GameDate.ts              # GameDate VO
+│   │   │   ├── PlayerStats.ts           # PlayerStats VO + recordResult
 │   │   │   └── Game.ts                  # Game aggregate root
 │   │   ├── services\
 │   │   │   ├── GuessEvaluator.ts        # Two-pass evaluation algorithm
-│   │   │   └── DailyChallengeGenerator.ts # Seeded PRNG + selection
+│   │   │   └── ShareTextGenerator.ts    # generateShareText(game): string
 │   │   └── ports\
 │   │       ├── IGameRepository.ts       # Port interface
-│   │       └── IEmojiCatalogProvider.ts # Port interface
+│   │       ├── IChallengeGenerator.ts   # Port interface
+│   │       └── IStatsRepository.ts      # Port interface
 │   │
 │   ├── application\                     # Use cases; depends on domain only
 │   │   ├── StartDailyGame.ts            # Load or create today's game
-│   │   ├── SubmitGuess.ts               # Validate + evaluate + save guess
-│   │   └── GetGameState.ts              # Read current game (for rehydration)
+│   │   └── SubmitGuess.ts               # Validate + evaluate + save guess + update stats
 │   │
 │   ├── infrastructure\                  # Implements domain ports
 │   │   ├── persistence\
-│   │   │   └── LocalStorageGameRepository.ts
+│   │   │   ├── LocalStorageGameRepository.ts
+│   │   │   └── LocalStorageStatsRepository.ts
+│   │   ├── challenge\
+│   │   │   └── SeededChallengeGenerator.ts  # mulberry32 + DJB2 + Fisher-Yates
 │   │   └── catalog\
-│   │       ├── StaticEmojiCatalogProvider.ts
 │   │       └── emoji-catalog.json       # Static emoji data
 │   │
 │   ├── presentation\                    # React layer
@@ -213,21 +240,22 @@ P:\Emoji-Game-V2\
 │   │   │       ├── Header.tsx           # Title + stats icon
 │   │   │       └── App.tsx              # Root component
 │   │   └── mappers\
-│   │       └── GameStateMapper.ts       # Domain Game → UI view model
+│   │       └── GameStateMapper.ts       # Domain Game → UI view model (incl. keyboard hints)
 │   │
-│   ├── main.tsx                         # Vite entry point
+│   ├── main.tsx                         # Vite entry point + composition root (manual DI)
 │   └── vite-env.d.ts
 │
 ├── tests\
 │   ├── domain\
 │   │   ├── GuessEvaluator.test.ts
-│   │   ├── DailyChallengeGenerator.test.ts
-│   │   └── Game.test.ts
+│   │   ├── Game.test.ts
+│   │   └── PlayerStats.test.ts
 │   ├── application\
 │   │   ├── StartDailyGame.test.ts
 │   │   └── SubmitGuess.test.ts
 │   └── infrastructure\
-│       └── LocalStorageGameRepository.test.ts
+│       ├── LocalStorageGameRepository.test.ts
+│       └── SeededChallengeGenerator.test.ts
 │
 ├── openspec\                            # SDD artifacts
 │   └── changes\
@@ -249,45 +277,46 @@ P:\Emoji-Game-V2\
 ### Phase 1 — Domain (no React, no infra)
 1. Value Objects: `GameDate`, `Emoji`, `CategoryId`, `EmojiCategory`, `EmojiSequence`
 2. Value Objects: `TileResult`, `GuessResult`, `Guess`, `GameStatus`
-3. Aggregate: `Game` (immutable, no persistence)
-4. Domain Service: `GuessEvaluator` with full test suite
-5. Domain Service: `DailyChallengeGenerator` with determinism tests
-6. Ports: `IGameRepository`, `IEmojiCatalogProvider` (interfaces only)
+3. Value Object: `PlayerStats` (with `recordResult` method and streak logic)
+4. Aggregate: `Game` (immutable, no persistence)
+5. Domain Service: `GuessEvaluator` with full test suite
+6. Domain Service: `generateShareText`
+7. Ports: `IGameRepository`, `IChallengeGenerator`, `IStatsRepository` (interfaces only)
 
 **Gate**: All domain unit tests pass. Zero external imports in `/domain`.
 
 ### Phase 2 — Application layer
-7. Use case: `StartDailyGame`
-8. Use case: `SubmitGuess`
-9. Use case: `GetGameState`
+8. Use case: `StartDailyGame` — (1) get today's UTC date, (2) try `loadByDate(today)`, (3) if found return existing game, (4) if not found call `challengeGenerator.generate(today)`, create new `Game`, save via repository, return
+9. Use case: `SubmitGuess` — validates guess, calls `game.submitGuess(sequence)`, saves updated game. If game just ended (won or lost), loads `PlayerStats`, calls `recordResult()`, saves updated stats via `IStatsRepository`.
 
 **Gate**: Use case tests pass with mock repositories.
 
 ### Phase 3 — Infrastructure
 10. `emoji-catalog.json` — curate 6+ categories, 10+ emojis each
-11. `StaticEmojiCatalogProvider` — load and validate catalog
+11. `SeededChallengeGenerator` — implements `IChallengeGenerator` port using mulberry32 PRNG, DJB2 hash, Fisher-Yates shuffle. Consumes the emoji catalog directly (no port needed for catalog access).
 12. `LocalStorageGameRepository` — serialize/deserialize Game to JSON
+13. `LocalStorageStatsRepository` — serialize/deserialize PlayerStats to JSON
 
 **Gate**: Integration test: start game, submit guesses, reload from localStorage, verify state matches.
 
 ### Phase 4 — Presentation (React)
-13. Zustand store + `useGameStore` hook (wires use cases)
-14. `Tile` and `Row` components
-15. `Board` component
-16. `EmojiKey` and `EmojiKeyboard` components
-17. `Header`, `App` root layout
-18. `ResultModal` (win/lose screen + share)
-19. `StatsModal`
-20. `useShareResult` hook (clipboard)
-21. Responsive polish, accessibility attributes
+14. Zustand store + `useGameStore` hook (wires use cases, manages `CurrentGuess` state)
+15. `Tile` and `Row` components
+16. `Board` component
+17. `EmojiKey` and `EmojiKeyboard` components
+18. `Header`, `App` root layout
+19. `ResultModal` (win/lose screen + share)
+20. `StatsModal`
+21. `useShareResult` hook (calls `generateShareText` then copies to clipboard)
+22. Responsive polish, accessibility attributes
 
 **Gate**: Manual smoke test: start game, play to win and to lose, share result, reload and verify persistence, mobile layout check.
 
 ### Phase 5 — QA & polish
-22. Edge cases: same emoji repeated in answer, empty attempts, already-played today
-23. Accessibility audit (keyboard nav, screen reader labels)
-24. Performance check (no unnecessary re-renders)
-25. Cross-browser smoke test (Chrome, Firefox, Safari mobile)
+23. Edge cases: repeated emoji in guess against unique answer, empty attempts, already-played today
+24. Accessibility audit (keyboard nav, screen reader labels)
+25. Performance check (no unnecessary re-renders)
+26. Cross-browser smoke test (Chrome, Firefox, Safari mobile)
 
 ---
 
@@ -296,7 +325,7 @@ P:\Emoji-Game-V2\
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
 | Emoji rendering inconsistency across OS/browser | High | Medium | Use emoji codes consistently; test on Windows, macOS, Android, iOS early |
-| GuessEvaluator frequency-counting bug (duplicate emojis) | Medium | High | Exhaustive unit tests with known-tricky cases before building UI |
+| GuessEvaluator frequency-counting bug (duplicate emojis in guess) | Medium | High | Exhaustive unit tests with known-tricky cases before building UI |
 | localStorage quota exceeded (statistics accumulate) | Low | Low | Prune stats older than 365 days on load |
 | Catalog bias: some categories easier than others | Medium | Low | Curate categories manually; keep category sizes balanced |
 | Date/timezone bug (player in UTC-12 gets "tomorrow's" puzzle) | Medium | Medium | Always use UTC date for seed calculation, not local date |
@@ -307,7 +336,7 @@ P:\Emoji-Game-V2\
 Domain objects are immutable (methods return new instances). Zustand works with mutable state internally. The `useGameStore` hook calls use cases (which return new `Game` instances) and replaces the store's game reference atomically. This keeps domain pure while keeping Zustand ergonomic.
 
 ### Key tradeoff: Static catalog vs. API-fed catalog
-Static catalog means no network, no loading states, no API keys — but adding new emojis requires a deploy. For v1, this is the right call. The `IEmojiCatalogProvider` port means swapping to an API later is a single infrastructure change.
+Static catalog means no network, no loading states, no API keys — but adding new emojis requires a deploy. For v1, this is the right call. The catalog is consumed directly by the infrastructure `SeededChallengeGenerator` — swapping to an API-fed source later only requires changing that one infrastructure class.
 
 ---
 
@@ -315,7 +344,7 @@ Static catalog means no network, no loading states, no API keys — but adding n
 
 ### Functional
 - [ ] The same date produces the same puzzle on two different browsers (determinism)
-- [ ] GuessEvaluator correctly handles all duplicate emoji edge cases
+- [ ] GuessEvaluator correctly handles all duplicate emoji edge cases (repeats in guess against unique answer)
 - [ ] Player can complete a game (win or lose) from a fresh page load
 - [ ] Game state survives page refresh mid-game
 - [ ] Share button copies correct emoji grid to clipboard
@@ -323,7 +352,7 @@ Static catalog means no network, no loading states, no API keys — but adding n
 
 ### Technical
 - [ ] Domain layer has zero external imports (enforced by ESLint no-restricted-imports or manual review)
-- [ ] Domain unit test coverage >= 90% (GuessEvaluator, DailyChallengeGenerator, Game aggregate)
+- [ ] Domain unit test coverage >= 90% (GuessEvaluator, Game aggregate, PlayerStats)
 - [ ] Application use case tests pass with mock ports
 - [ ] No TypeScript errors in strict mode (`"strict": true`)
 - [ ] Lighthouse performance score >= 90 on mobile
@@ -336,4 +365,5 @@ Static catalog means no network, no loading states, no API keys — but adding n
 ---
 
 *Proposal generated: 2026-03-11*
+*Updated: 2026-03-12 — applied decisions D-1 through D-8, A-1 through A-5*
 *Next phase: run `sdd-spec` and `sdd-design` in parallel*
