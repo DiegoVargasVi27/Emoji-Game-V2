@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -L -o /tmp/engram_windows_amd64.zip \"https://github.com/Gentleman-Programming/engram/releases/download/v1.9.4/engram_1.9.4_windows_amd64.zip\" && echo \"Downloaded OK\")",
+      "Bash(ls \"P:\\\\Emoji-Game-V2\\\\openspec\\\\changes\\\\emoji-wordle\\\\\" 2>/dev/null || echo \"DIR_EMPTY_OR_MISSING\")"
+    ]
+  }
+}
