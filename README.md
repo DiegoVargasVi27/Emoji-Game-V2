@@ -104,7 +104,7 @@ npm test
 npm run test:ui
 ```
 
-## Decisiones de Diseno
+## Decisiones de Diseño
 
 **Value Objects inmutables con constructores privados** -- Los tipos de dominio como `Emoji`, `EmojiSequence`, `GameDate` y `GuessResult` enforzan sus invariantes a traves de metodos factory (`create`, `restore`) y exponen unicamente propiedades de solo lectura. Esto hace que los estados invalidos sean irrepresentables.
 
