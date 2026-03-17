@@ -1,7 +1,7 @@
 {
   "name": "emoji-game-v2",
   "version": "1.0.0",
-  "description": "A Wordle-inspired emoji guessing game built with React, TypeScript, and Domain-Driven Design architecture",
+  "description": "Juego de adivinanza de emojis inspirado en Wordle, construido con React, TypeScript y arquitectura Domain-Driven Design",
   "author": "Diego Vargas",
   "license": "MIT",
   "repository": {
@@ -14,7 +14,7 @@
     "wordle",
     "emoji",
     "ddd",
-    "game",
+    "juego",
     "zustand",
     "vite"
   ],

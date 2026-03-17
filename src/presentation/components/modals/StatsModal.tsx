@@ -26,17 +26,17 @@ export function StatsModal({ stats, onClose }: StatsModalProps) {
   return (
     <ModalOverlay isOpen={true} onClose={onClose}>
       <div className="text-center">
-        <h2 className="text-xl font-bold mb-4">Statistics</h2>
+        <h2 className="text-xl font-bold mb-4">Estadísticas</h2>
 
         <div className="grid grid-cols-4 gap-2 mb-6">
-          <StatItem value={stats.gamesPlayed} label="Played" />
-          <StatItem value={winPercent} label="Win %" />
-          <StatItem value={stats.currentStreak} label="Current Streak" />
-          <StatItem value={stats.bestStreak} label="Best Streak" />
+          <StatItem value={stats.gamesPlayed} label="Jugadas" />
+          <StatItem value={winPercent} label="% Victorias" />
+          <StatItem value={stats.currentStreak} label="Racha actual" />
+          <StatItem value={stats.bestStreak} label="Mejor racha" />
         </div>
 
         <h3 className="text-lg font-semibold mb-3 text-left">
-          Guess Distribution
+          Distribución de intentos
         </h3>
         <div className="space-y-1">
           {([1, 2, 3, 4, 5, 6] as const).map((num) => {

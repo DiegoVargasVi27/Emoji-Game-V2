@@ -2,10 +2,10 @@ import { PageLayout } from '@presentation/components/layout/PageLayout.tsx'
 
 export default function HowToPlayPage() {
   return (
-    <PageLayout title="How to Play">
+    <PageLayout title="Cómo jugar">
       <div className="prose prose-invert">
-        <h2>How to Play</h2>
-        <p>Coming Soon</p>
+        <h2>Cómo jugar</h2>
+        <p>Próximamente</p>
       </div>
     </PageLayout>
   )

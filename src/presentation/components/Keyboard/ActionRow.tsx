@@ -10,7 +10,7 @@ export function ActionRow({ onDelete, onSubmit, canSubmit }: ActionRowProps) {
       <button
         className="min-h-[44px] px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg font-medium cursor-pointer transition-colors select-none"
         onClick={onDelete}
-        aria-label="Delete last emoji"
+        aria-label="Borrar último emoji"
         type="button"
       >
         &#9003;
@@ -19,7 +19,7 @@ export function ActionRow({ onDelete, onSubmit, canSubmit }: ActionRowProps) {
         className="min-h-[44px] px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed select-none"
         onClick={onSubmit}
         disabled={!canSubmit}
-        aria-label="Submit guess"
+        aria-label="Enviar intento"
         type="button"
       >
         Enter

@@ -7,10 +7,10 @@ interface NavigationDrawerProps {
 }
 
 const NAV_LINKS = [
-  { to: '/', label: 'Home' },
-  { to: '/how-to-play', label: 'How to Play' },
-  { to: '/about', label: 'About the Project' },
-  { to: '/about-me', label: 'About Me' },
+  { to: '/', label: 'Inicio' },
+  { to: '/how-to-play', label: 'Cómo jugar' },
+  { to: '/about', label: 'Sobre el proyecto' },
+  { to: '/about-me', label: 'Sobre mí' },
 ] as const
 
 export function NavigationDrawer({ isOpen, onClose }: NavigationDrawerProps) {
@@ -54,7 +54,7 @@ export function NavigationDrawer({ isOpen, onClose }: NavigationDrawerProps) {
       className={`fixed inset-0 z-50 transition-visibility ${isOpen ? 'visible' : 'invisible pointer-events-none'}`}
       role="dialog"
       aria-modal="true"
-      aria-label="Navigation menu"
+      aria-label="Menú de navegación"
     >
       {/* Backdrop */}
       <div
@@ -74,7 +74,7 @@ export function NavigationDrawer({ isOpen, onClose }: NavigationDrawerProps) {
           <button
             onClick={onClose}
             className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-300 hover:text-white transition-colors"
-            aria-label="Close navigation menu"
+            aria-label="Cerrar menú de navegación"
             type="button"
           >
             <svg

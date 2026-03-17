@@ -2,10 +2,10 @@ import { PageLayout } from '@presentation/components/layout/PageLayout.tsx'
 
 export default function AboutMePage() {
   return (
-    <PageLayout title="About Me">
+    <PageLayout title="Sobre mí">
       <div className="prose prose-invert">
-        <h2>About Me</h2>
-        <p>Coming Soon</p>
+        <h2>Sobre mí</h2>
+        <p>Próximamente</p>
       </div>
     </PageLayout>
   )

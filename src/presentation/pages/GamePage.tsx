@@ -31,7 +31,7 @@ export function GamePage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center flex-1 text-gray-400">
-        Loading...
+        Cargando...
       </div>
     )
   }
