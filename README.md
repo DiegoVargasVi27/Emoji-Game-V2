@@ -1,119 +1,119 @@
 # Emoji Wordle
 
-A daily puzzle game where players guess a hidden sequence of 5 emojis from a themed category. Inspired by Wordle, each guess reveals which emojis are correct, misplaced, or absent -- using colored tile feedback to guide the player toward the answer in 6 attempts or fewer.
+Un juego de acertijos diario donde los jugadores deben adivinar una secuencia oculta de 5 emojis pertenecientes a una categoria tematica. Inspirado en Wordle, cada intento revela que emojis son correctos, estan en otra posicion o estan ausentes, usando fichas de colores como guia para encontrar la respuesta en 6 intentos o menos.
 
-## Features
+## Funcionalidades
 
-- Daily challenge seeded by date, so every player gets the same puzzle
-- Wordle-style feedback: correct (green), misplaced (yellow), absent (gray)
-- Emoji keyboard filtered by the day's category
-- Animated tile reveals with cascading color updates
-- Win/loss streaks and guess distribution statistics
-- Shareable results as colored grid text
-- Game state persisted in localStorage across sessions
+- Desafio diario generado a partir de la fecha, de modo que todos los jugadores reciben el mismo puzzle
+- Feedback estilo Wordle: correcto (verde), posicion incorrecta (amarillo), ausente (gris)
+- Teclado de emojis filtrado por la categoria del dia
+- Revelacion de fichas con animaciones en cascada
+- Estadisticas de rachas de victorias/derrotas y distribucion de intentos
+- Resultados compartibles como grilla de colores en texto
+- Estado del juego persistido en localStorage entre sesiones
 
-## Tech Stack
+## Stack Tecnologico
 
-| Technology | Role |
+| Tecnologia | Rol |
 |---|---|
-| React 19 | UI rendering |
-| TypeScript 5.9 | Strict mode with `noUncheckedIndexedAccess` |
-| Zustand 5 | Lightweight state management (vanilla store) |
-| Vite 7 | Dev server and bundler |
-| Vitest 4 | Unit testing with jsdom environment |
-| Tailwind CSS 3 | Utility-first styling |
-| ESLint 9 | Flat config with architectural boundary enforcement |
+| React 19 | Renderizado de UI |
+| TypeScript 5.9 | Modo estricto con `noUncheckedIndexedAccess` |
+| Zustand 5 | Manejo de estado liviano (vanilla store) |
+| Vite 7 | Servidor de desarrollo y bundler |
+| Vitest 4 | Testing unitario con entorno jsdom |
+| Tailwind CSS 3 | Estilos basados en utilidades |
+| ESLint 9 | Configuracion flat con enforcement de limites arquitectonicos |
 
-## Architecture
+## Arquitectura
 
-The project follows **Domain-Driven Design** with a strict layered architecture. Each layer has a single direction of dependency, enforced at the linting level:
+El proyecto sigue Domain-Driven Design (DDD) con una arquitectura de capas estricta. Cada capa tiene una unica direccion de dependencia, enforceada a nivel de linting:
 
 ```
-domain  -->  application  -->  infrastructure
-                               presentation
+dominio  -->  aplicacion  -->  infraestructura
+                               presentacion
 ```
 
-- **Domain** contains the core game logic as pure TypeScript classes: value objects (`Emoji`, `EmojiSequence`, `GameDate`, `CategoryId`, `GuessResult`), aggregates (`Game`, `PlayerStats`), domain services (`GuessEvaluator`, `ShareTextGenerator`), and port interfaces (`IGameRepository`, `IChallengeGenerator`, `IStatsRepository`). It has zero external dependencies.
-- **Application** implements use cases (`StartDailyGame`, `SubmitGuess`, `GetPlayerStats`) that orchestrate domain objects through port interfaces.
-- **Infrastructure** provides concrete adapters: `LocalStorageGameRepository`, `LocalStorageStatsRepository` for persistence, `SeededChallengeGenerator` for deterministic daily puzzles using a seeded PRNG (djb2 + Mulberry32).
-- **Presentation** contains React components, a Zustand store, view models, and mappers that translate domain state into UI-ready data.
+- **Dominio** contiene la logica central del juego como clases puras de TypeScript: Value Objects (`Emoji`, `EmojiSequence`, `GameDate`, `CategoryId`, `GuessResult`), agregados (`Game`, `PlayerStats`), servicios de dominio (`GuessEvaluator`, `ShareTextGenerator`) e interfaces de puertos (`IGameRepository`, `IChallengeGenerator`, `IStatsRepository`). No tiene dependencias externas.
+- **Aplicacion** implementa los casos de uso (`StartDailyGame`, `SubmitGuess`, `GetPlayerStats`) que orquestan los objetos de dominio a traves de interfaces de puertos.
+- **Infraestructura** provee los adaptadores concretos: `LocalStorageGameRepository`, `LocalStorageStatsRepository` para persistencia, `SeededChallengeGenerator` para puzzles diarios deterministicos usando un PRNG con semilla (djb2 + Mulberry32).
+- **Presentacion** contiene los componentes React, un store de Zustand, view models y mappers que traducen el estado de dominio a datos listos para la UI.
 
-An ESLint `no-restricted-imports` rule prevents the domain layer from importing infrastructure or presentation code, keeping the dependency direction clean at CI time.
+Una regla de ESLint `no-restricted-imports` previene que la capa de dominio importe codigo de infraestructura o presentacion, manteniendo la direccion de dependencias limpia en tiempo de CI.
 
-## Project Structure
+## Estructura del Proyecto
 
 ```
 src/
   domain/
-    model/          # Value objects and aggregates (Game, Emoji, PlayerStats, ...)
-    services/       # Domain services (GuessEvaluator, ShareTextGenerator)
-    ports/          # Interfaces for external dependencies
-  application/      # Use cases (StartDailyGame, SubmitGuess, GetPlayerStats)
+    model/          # Value Objects y agregados (Game, Emoji, PlayerStats, ...)
+    services/       # Servicios de dominio (GuessEvaluator, ShareTextGenerator)
+    ports/          # Interfaces para dependencias externas
+  application/      # Casos de uso (StartDailyGame, SubmitGuess, GetPlayerStats)
   infrastructure/
-    catalog/        # Emoji category data
-    challenge/      # Seeded daily challenge generator
-    persistence/    # LocalStorage adapters
+    catalog/        # Datos de categorias de emojis
+    challenge/      # Generador de desafios diarios con semilla
+    persistence/    # Adaptadores de localStorage
   presentation/
-    components/     # React components (Board, Keyboard, modals, layout)
-    hooks/          # Custom React hooks
-    mappers/        # Domain-to-ViewModel transformations
-    pages/          # Page-level components
-    store/          # Zustand store
-    viewmodels/     # ViewModel type definitions
+    components/     # Componentes React (Board, Keyboard, modales, layout)
+    hooks/          # Hooks personalizados de React
+    mappers/        # Transformaciones de dominio a ViewModel
+    pages/          # Componentes a nivel de pagina
+    store/          # Store de Zustand
+    viewmodels/     # Definiciones de tipos de ViewModel
 tests/
-  domain/           # Value object and aggregate tests
-  application/      # Use case tests
-  infrastructure/   # Adapter tests
-  presentation/     # Mapper tests
+  domain/           # Tests de Value Objects y agregados
+  application/      # Tests de casos de uso
+  infrastructure/   # Tests de adaptadores
+  presentation/     # Tests de mappers
 ```
 
-## Getting Started
+## Primeros Pasos
 
 ```bash
-# Clone the repository
+# Clonar el repositorio
 git clone https://github.com/diegovargas/emoji-game-v2.git
 cd emoji-game-v2
 
-# Install dependencies
+# Instalar dependencias
 npm install
 
-# Start the dev server
+# Iniciar el servidor de desarrollo
 npm run dev
 
-# Run tests
+# Ejecutar tests
 npm test
 
-# Build for production
+# Build para produccion
 npm run build
 ```
 
 ## Testing
 
-The test suite contains **92 tests** across 16 test files, organized by architectural layer:
+La suite de tests contiene **92 tests** distribuidos en 16 archivos, organizados por capa arquitectonica:
 
-- **Domain tests** (10 files): Thorough coverage of value object invariants, game state transitions, guess evaluation logic (including duplicate emoji handling), player stats with streak tracking, and share text generation.
-- **Application tests** (3 files): Use case tests with in-memory repository stubs, verifying orchestration behavior including stats updates on game completion.
-- **Infrastructure tests** (3 files): Adapter tests for localStorage persistence round-trips and seeded challenge determinism.
-- **Presentation tests** (1 file): GameStateMapper tests ensuring correct domain-to-viewmodel translation.
+- **Tests de dominio** (10 archivos): Cobertura exhaustiva de invariantes de Value Objects, transiciones de estado del juego, logica de evaluacion de intentos (incluyendo manejo de emojis duplicados), estadisticas del jugador con seguimiento de rachas, y generacion de texto para compartir.
+- **Tests de aplicacion** (3 archivos): Tests de casos de uso con stubs de repositorios en memoria, verificando el comportamiento de orquestacion incluyendo actualizacion de estadisticas al completar una partida.
+- **Tests de infraestructura** (3 archivos): Tests de adaptadores para round-trips de persistencia en localStorage y determinismo del generador con semilla.
+- **Tests de presentacion** (1 archivo): Tests de GameStateMapper asegurando la traduccion correcta de dominio a viewmodel.
 
 ```bash
-# Run all tests
+# Ejecutar todos los tests
 npm test
 
-# Run tests with interactive UI
+# Ejecutar tests con UI interactiva
 npm run test:ui
 ```
 
-## Design Decisions
+## Decisiones de Diseno
 
-**Immutable value objects with private constructors** -- Domain types like `Emoji`, `EmojiSequence`, `GameDate`, and `GuessResult` enforce their invariants through factory methods (`create`, `restore`) and expose only readonly properties. This makes invalid states unrepresentable.
+**Value Objects inmutables con constructores privados** -- Los tipos de dominio como `Emoji`, `EmojiSequence`, `GameDate` y `GuessResult` enforzan sus invariantes a traves de metodos factory (`create`, `restore`) y exponen unicamente propiedades de solo lectura. Esto hace que los estados invalidos sean irrepresentables.
 
-**Game as an immutable aggregate** -- `Game.submitGuess()` returns a new `Game` instance rather than mutating state. This eliminates an entire class of bugs related to shared mutable state and makes the game logic trivially testable.
+**Game como agregado inmutable** -- `Game.submitGuess()` retorna una nueva instancia de `Game` en lugar de mutar el estado. Esto elimina toda una clase de bugs relacionados con estado mutable compartido y hace que la logica del juego sea trivialmente testeable.
 
-**Ports and adapters** -- The domain defines interfaces (`IGameRepository`, `IChallengeGenerator`, `IStatsRepository`) that infrastructure implements. Use cases depend only on these abstractions, making it straightforward to swap localStorage for an API backend or test with in-memory stubs.
+**Puertos y adaptadores** -- El dominio define interfaces (`IGameRepository`, `IChallengeGenerator`, `IStatsRepository`) que la infraestructura implementa. Los casos de uso dependen unicamente de estas abstracciones, lo que facilita reemplazar localStorage por un backend con API o testear con stubs en memoria.
 
-**Deterministic daily challenges** -- The `SeededChallengeGenerator` uses a djb2 hash of the date string as a seed for a Mulberry32 PRNG. This guarantees every player sees the same puzzle on a given day without requiring a server.
+**Desafios diarios deterministicos** -- El `SeededChallengeGenerator` usa un hash djb2 del string de la fecha como semilla para un PRNG Mulberry32. Esto garantiza que todos los jugadores vean el mismo puzzle en un dia dado sin necesidad de un servidor.
 
-**Two-pass guess evaluation** -- `GuessEvaluator` uses a frequency-map approach with two passes (correct first, then misplaced) to correctly handle duplicate emojis in guesses -- the same algorithm Wordle uses for duplicate letters.
+**Evaluacion de intentos en dos pasadas** -- `GuessEvaluator` usa un enfoque de mapa de frecuencias con dos pasadas (primero correctos, luego en posicion incorrecta) para manejar correctamente emojis duplicados en los intentos, el mismo algoritmo que Wordle usa para letras duplicadas.
 
-**Path aliases for layer boundaries** -- TypeScript path aliases (`@domain/*`, `@application/*`, `@infrastructure/*`, `@presentation/*`) make imports readable and reinforce the architectural layers at the code level.
+**Path aliases para limites entre capas** -- Los path aliases de TypeScript (`@domain/*`, `@application/*`, `@infrastructure/*`, `@presentation/*`) hacen que los imports sean legibles y refuerzan las capas arquitectonicas a nivel de codigo.

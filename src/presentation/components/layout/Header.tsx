@@ -11,7 +11,7 @@ export function Header({ onStatsClick, onMenuClick }: HeaderProps) {
         <button
           className="absolute left-0 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-300 hover:text-white cursor-pointer transition-colors"
           onClick={onMenuClick}
-          aria-label="Open navigation menu"
+          aria-label="Abrir menú de navegación"
           type="button"
         >
           <svg
@@ -36,7 +36,7 @@ export function Header({ onStatsClick, onMenuClick }: HeaderProps) {
         <button
           className="absolute right-0 min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-300 hover:text-white cursor-pointer transition-colors"
           onClick={onStatsClick}
-          aria-label="View statistics"
+          aria-label="Ver estadísticas"
           type="button"
         >
           <svg
