@@ -1,5 +1,4 @@
 import { Emoji } from '@domain/model/Emoji'
-import { DomainError } from '@domain/model/DomainError'
 
 describe('Emoji', () => {
   it('should create with valid code and name', () => {

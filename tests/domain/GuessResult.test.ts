@@ -1,6 +1,5 @@
 import { GuessResult } from '@domain/model/GuessResult'
 import type { TileResult } from '@domain/model/TileResult'
-import { DomainError } from '@domain/model/DomainError'
 
 describe('GuessResult', () => {
   it('should create with valid 5-tile array', () => {

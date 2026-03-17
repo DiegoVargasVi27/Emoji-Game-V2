@@ -1,5 +1,4 @@
 import { CategoryId } from '@domain/model/CategoryId'
-import { DomainError } from '@domain/model/DomainError'
 
 describe('CategoryId', () => {
   it('should accept valid slug "fruits"', () => {

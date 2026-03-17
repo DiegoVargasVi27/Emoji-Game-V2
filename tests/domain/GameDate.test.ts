@@ -1,5 +1,4 @@
 import { GameDate } from '@domain/model/GameDate'
-import { DomainError } from '@domain/model/DomainError'
 
 describe('GameDate', () => {
   it('should create with valid date "2026-03-11"', () => {

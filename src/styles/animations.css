@@ -1,0 +1,82 @@
+@keyframes flipIn {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(90deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@layer utilities {
+  .animate-flip {
+    animation: flipIn 500ms ease-in-out both;
+  }
+
+  .animate-shake {
+    animation: shake 300ms ease-in-out;
+  }
+
+  .animate-bounce-tile {
+    animation: bounce 400ms ease-in-out;
+  }
+
+  .animate-pop-in {
+    animation: popIn 100ms ease-out;
+  }
+
+  .animate-bounce-in {
+    animation: bounceIn 300ms ease-out both;
+  }
+}

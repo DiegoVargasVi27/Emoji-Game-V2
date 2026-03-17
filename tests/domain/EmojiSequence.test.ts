@@ -1,6 +1,5 @@
 import { EmojiSequence } from '@domain/model/EmojiSequence'
 import { Emoji } from '@domain/model/Emoji'
-import { DomainError } from '@domain/model/DomainError'
 
 const e = (code: string) => Emoji.create({ code, name: code })
 

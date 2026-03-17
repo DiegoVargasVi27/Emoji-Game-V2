@@ -19,6 +19,9 @@ export const EMOJI_CATALOG: ReadonlyArray<{
       { code: '🍌', name: 'banana' },
       { code: '🍍', name: 'pineapple' },
       { code: '🥭', name: 'mango' },
+      { code: '🫐', name: 'blueberry' },
+      { code: '🥥', name: 'coconut' },
+      { code: '🍈', name: 'melon' },
     ],
   },
   {
@@ -37,6 +40,9 @@ export const EMOJI_CATALOG: ReadonlyArray<{
       { code: '🐯', name: 'tiger' },
       { code: '🦁', name: 'lion' },
       { code: '🐮', name: 'cow' },
+      { code: '🐸', name: 'frog' },
+      { code: '🐵', name: 'monkey face' },
+      { code: '🦄', name: 'unicorn' },
     ],
   },
   {
@@ -55,6 +61,9 @@ export const EMOJI_CATALOG: ReadonlyArray<{
       { code: '🧁', name: 'cupcake' },
       { code: '🥞', name: 'pancakes' },
       { code: '🧇', name: 'waffle' },
+      { code: '🥨', name: 'pretzel' },
+      { code: '🌯', name: 'burrito' },
+      { code: '🥐', name: 'croissant' },
     ],
   },
   {
@@ -73,6 +82,9 @@ export const EMOJI_CATALOG: ReadonlyArray<{
       { code: '🚐', name: 'minibus' },
       { code: '🛻', name: 'pickup truck' },
       { code: '🚚', name: 'delivery truck' },
+      { code: '🚃', name: 'railway car' },
+      { code: '🏍️', name: 'motorcycle' },
+      { code: '🚲', name: 'bicycle' },
     ],
   },
   {
@@ -91,6 +103,9 @@ export const EMOJI_CATALOG: ReadonlyArray<{
       { code: '💗', name: 'growing heart' },
       { code: '💖', name: 'sparkling heart' },
       { code: '💝', name: 'heart with ribbon' },
+      { code: '💞', name: 'revolving hearts' },
+      { code: '💘', name: 'heart with arrow' },
+      { code: '💕', name: 'two hearts' },
     ],
   },
   {
@@ -109,6 +124,9 @@ export const EMOJI_CATALOG: ReadonlyArray<{
       { code: '🏸', name: 'badminton' },
       { code: '🥊', name: 'boxing glove' },
       { code: '🥋', name: 'martial arts uniform' },
+      { code: '⛳', name: 'flag in hole' },
+      { code: '🎳', name: 'bowling' },
+      { code: '🏋️', name: 'person lifting weights' },
     ],
   },
   {
@@ -127,6 +145,9 @@ export const EMOJI_CATALOG: ReadonlyArray<{
       { code: '🍀', name: 'four leaf clover' },
       { code: '🌿', name: 'herb' },
       { code: '🍁', name: 'maple leaf' },
+      { code: '🌾', name: 'sheaf of rice' },
+      { code: '🍂', name: 'fallen leaves' },
+      { code: '🪻', name: 'hyacinth' },
     ],
   },
   {
@@ -145,6 +166,9 @@ export const EMOJI_CATALOG: ReadonlyArray<{
       { code: '😊', name: 'smiling face with smiling eyes' },
       { code: '😇', name: 'smiling face with halo' },
       { code: '🥰', name: 'smiling face with hearts' },
+      { code: '🤩', name: 'star-struck' },
+      { code: '😎', name: 'smiling face with sunglasses' },
+      { code: '🥳', name: 'partying face' },
     ],
   },
 ] as const

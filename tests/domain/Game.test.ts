@@ -4,7 +4,6 @@ import { Emoji } from '@domain/model/Emoji'
 import { EmojiSequence } from '@domain/model/EmojiSequence'
 import { EmojiCategory } from '@domain/model/EmojiCategory'
 import { CategoryId } from '@domain/model/CategoryId'
-import { DomainError } from '@domain/model/DomainError'
 
 const e = (code: string) => Emoji.create({ code, name: code })
 const seq = (...codes: string[]) => EmojiSequence.create(codes.map((c) => e(c)))

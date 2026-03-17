@@ -1,5 +1,1 @@
-function App() {
-  return <div>Emoji Wordle</div>
-}
-
-export default App
+export { App as default } from '@presentation/components/layout/App.tsx'
