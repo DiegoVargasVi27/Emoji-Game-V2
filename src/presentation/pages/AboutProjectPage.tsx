@@ -148,7 +148,7 @@ export default function AboutProjectPage() {
         {/* 6. GitHub Link */}
         <section className="text-center">
           <a
-            href="https://github.com/diegopacheco-dev/Emoji-Game-V2"
+            href="https://github.com/DiegoVargasVi27/Emoji-Game-V2"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 min-h-[44px] min-w-[44px] px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors no-underline"

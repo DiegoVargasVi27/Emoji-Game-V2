@@ -1,22 +1,25 @@
 import { PageLayout } from '@presentation/components/layout/PageLayout.tsx'
 
 const skills = [
-  'Angular',
+  '.NET',
+  'C#',
+  'Java',
+  'Kotlin',
+  'SQL',
   'React',
   'TypeScript',
-  'Clean Architecture',
-  'DDD',
-  'Testing',
-  'State Management',
-  'Node.js',
   'Tailwind CSS',
   'Git',
+  'GitFlow',
+  'REST APIs',
+  'DDD',
+  'Testing',
 ]
 
 const socialLinks = [
   {
     name: 'GitHub',
-    url: 'https://github.com/diegopacheco-dev',
+    url: 'https://github.com/DiegoVargasVi27',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +33,7 @@ const socialLinks = [
   },
   {
     name: 'LinkedIn',
-    url: 'https://linkedin.com/in/diegopacheco-dev',
+    url: 'https://www.linkedin.com/in/diego-pastor-vargas-vidaurre/',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -53,9 +56,9 @@ export default function AboutMePage() {
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-3xl mx-auto mb-4">
             D
           </div>
-          <h2 className="text-2xl font-bold mb-1">Diego Pacheco</h2>
+          <h2 className="text-2xl font-bold mb-1">Diego Vargas Vidaurre</h2>
           <p className="text-lg text-gray-400">
-            Frontend Developer &amp; Software Architect
+            Analista Programador · Software Developer Junior
           </p>
         </section>
 
@@ -63,16 +66,17 @@ export default function AboutMePage() {
         <section className="mb-10">
           <h2 className="text-2xl font-bold mb-3">Filosofía</h2>
           <p className="text-gray-300 mb-3">
-            Creo que los fundamentos son lo que separa a un desarrollador
-            senior de alguien que solo sigue tutoriales. Los frameworks cambian,
-            las modas pasan, pero los conceptos sólidos de arquitectura, los
-            patrones de diseño y el pensamiento crítico son para siempre.
+            La tecnología avanza a un ritmo que no para, y cada avance trae
+            nuevos desafíos. Creo que lo más importante no es dominar una
+            herramienta específica, sino desarrollar la capacidad de adaptarse:
+            entender los fundamentos, cuestionar las decisiones y estar
+            dispuesto a aprender formas nuevas de trabajar.
           </p>
           <p className="text-gray-300">
-            Mi enfoque combina arquitectura limpia con pragmatismo: código que
-            es mantenible, testeable y que comunica intención. Cada abstracción
-            tiene que justificar su existencia, y cada decisión técnica tiene
-            que poder explicarse.
+            Este proyecto refleja esa mentalidad: explorar arquitecturas,
+            patrones y tecnologías modernas como una forma de seguir creciendo
+            como desarrollador. No se trata de tener todas las respuestas,
+            sino de hacer las preguntas correctas.
           </p>
         </section>
 
@@ -119,7 +123,7 @@ export default function AboutMePage() {
             escribirme.
           </p>
           <a
-            href="https://linkedin.com/in/diegopacheco-dev"
+            href="https://www.linkedin.com/in/diego-pastor-vargas-vidaurre/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 min-h-[44px] min-w-[44px] px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors no-underline"
