@@ -90,15 +90,12 @@ describe('LocalStorageGameRepository', () => {
     expect(loaded).toBeNull()
   })
 
-  it('should return null and log warning for corrupt JSON', () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+  it('should return null for corrupt JSON', () => {
     store['emoji-wordle:game:2026-03-12'] = 'not valid json {{{}'
     const date = GameDate.create('2026-03-12')
     const loaded = repo.loadByDate(date)
 
     expect(loaded).toBeNull()
-    expect(warnSpy).toHaveBeenCalled()
-    warnSpy.mockRestore()
   })
 
   it('should overwrite previous game for same date', () => {

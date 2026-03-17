@@ -1,7 +1,23 @@
 {
   "name": "emoji-game-v2",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "A Wordle-inspired emoji guessing game built with React, TypeScript, and Domain-Driven Design architecture",
+  "author": "Diego Vargas",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/diegovargas/emoji-game-v2"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "wordle",
+    "emoji",
+    "ddd",
+    "game",
+    "zustand",
+    "vite"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -15,10 +31,12 @@
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-router": "^7.13.1",
     "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@tailwindcss/typography": "^0.5.19",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.10.1",

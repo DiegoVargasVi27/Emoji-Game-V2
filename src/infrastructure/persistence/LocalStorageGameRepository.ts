@@ -94,11 +94,8 @@ export class LocalStorageGameRepository implements IGameRepository {
         attempts,
         status: data.status,
       })
-    } catch (error) {
-      console.warn(
-        `Failed to load game for date ${date.value}:`,
-        error,
-      )
+    } catch {
+      // Silently handle storage errors - game continues with defaults
       return null
     }
   }

@@ -54,14 +54,11 @@ describe('LocalStorageStatsRepository', () => {
   })
 
   it('should return PlayerStats.empty() for corrupt localStorage', () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
     store['emoji-wordle:stats'] = 'not valid json!!!'
     const stats = repo.load()
 
     expect(stats.gamesPlayed).toBe(0)
     expect(stats.gamesWon).toBe(0)
-    expect(warnSpy).toHaveBeenCalled()
-    warnSpy.mockRestore()
   })
 
   it('should overwrite existing stats on save', () => {

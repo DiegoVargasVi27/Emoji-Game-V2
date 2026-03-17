@@ -45,8 +45,8 @@ export class LocalStorageStatsRepository implements IStatsRepository {
         lastPlayedDate,
         guessDistribution,
       })
-    } catch (error) {
-      console.warn('Failed to load player stats:', error)
+    } catch {
+      // Silently handle storage errors - game continues with defaults
       return PlayerStats.empty()
     }
   }
