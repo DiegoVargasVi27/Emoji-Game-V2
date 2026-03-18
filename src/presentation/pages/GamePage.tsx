@@ -5,6 +5,7 @@ import { EmojiKeyboard } from '@presentation/components/Keyboard/EmojiKeyboard.t
 import { ResultModal } from '@presentation/components/modals/ResultModal.tsx'
 import { StatsModal } from '@presentation/components/modals/StatsModal.tsx'
 import { useShareResult } from '@presentation/hooks/useShareResult.ts'
+import { AdBanner } from '@presentation/components/ads/AdBanner.tsx'
 
 export function GamePage() {
   const {
@@ -83,6 +84,10 @@ export function GamePage() {
           revealedKeyStatuses={revealedKeyStatuses}
         />
       )}
+      <AdBanner
+        show={viewModel.status !== 'playing'}
+        adSlot={import.meta.env.VITE_AD_SLOT_MOBILE_BANNER ?? ''}
+      />
       {showResultModal && viewModel.status !== 'playing' && (
         <ResultModal
           status={viewModel.status}
