@@ -1,20 +1,10 @@
 import { PageLayout } from '@presentation/components/layout/PageLayout.tsx'
 
-const skills = [
-  '.NET',
-  'C#',
-  'Java',
-  'Kotlin',
-  'SQL',
-  'React',
-  'TypeScript',
-  'Tailwind CSS',
-  'Git',
-  'GitFlow',
-  'REST APIs',
-  'DDD',
-  'Testing',
-]
+const projectTech = ['React 19', 'TypeScript', 'Vite', 'Tailwind CSS', 'Zustand', 'Vitest', 'React Router']
+
+const architecture = ['Clean Architecture', 'Domain-Driven Design', 'SOLID']
+
+const personalStack = ['.NET', 'C#', 'Java', 'SQL', 'React', 'TypeScript', 'REST APIs']
 
 const socialLinks = [
   {
@@ -83,11 +73,37 @@ export default function AboutMePage() {
         {/* 3. Skills & Expertise */}
         <section className="mb-10">
           <h2 className="text-2xl font-bold mb-4">Skills &amp; Expertise</h2>
-          <div className="flex flex-wrap gap-2">
-            {skills.map((skill) => (
+
+          <h3 className="text-lg font-semibold mb-2">Tecnologías del Proyecto</h3>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {projectTech.map((skill) => (
               <span
                 key={skill}
                 className="px-3 py-1 bg-blue-900/50 text-blue-300 border border-blue-700 rounded-full text-sm font-medium"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+
+          <h3 className="text-lg font-semibold mb-2">Arquitectura</h3>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {architecture.map((skill) => (
+              <span
+                key={skill}
+                className="px-3 py-1 bg-purple-900/50 text-purple-300 border border-purple-700 rounded-full text-sm font-medium"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+
+          <h3 className="text-lg font-semibold mb-2">Stack Personal</h3>
+          <div className="flex flex-wrap gap-2">
+            {personalStack.map((skill) => (
+              <span
+                key={skill}
+                className="px-3 py-1 bg-gray-700/50 text-gray-300 border border-gray-600 rounded-full text-sm font-medium"
               >
                 {skill}
               </span>
