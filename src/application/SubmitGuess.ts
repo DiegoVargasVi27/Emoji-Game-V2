@@ -6,10 +6,13 @@ import type { Game } from '@domain/model/Game.ts'
 import { ApplicationError } from './ApplicationError.ts'
 
 export class SubmitGuess {
-  constructor(
-    private readonly gameRepo: IGameRepository,
-    private readonly statsRepo: IStatsRepository,
-  ) {}
+  private readonly gameRepo: IGameRepository
+  private readonly statsRepo: IStatsRepository
+
+  constructor(gameRepo: IGameRepository, statsRepo: IStatsRepository) {
+    this.gameRepo = gameRepo
+    this.statsRepo = statsRepo
+  }
 
   execute(date: GameDate, sequence: EmojiSequence): Game {
     const game = this.gameRepo.loadByDate(date)
