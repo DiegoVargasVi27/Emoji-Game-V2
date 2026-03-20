@@ -131,17 +131,20 @@ export default function AboutProjectPage() {
             Desarrollo Asistido por IA
           </h2>
           <p className="text-gray-300 mb-3">
-            Este proyecto fue desarrollado siguiendo la filosofía Tony
-            Stark/Jarvis: el desarrollador dirige la arquitectura, toma las
-            decisiones de diseño y define los estándares de calidad. La IA
-            asiste en la ejecución, acelerando la implementación sin
-            comprometer los fundamentos.
+            Este proyecto fue desarrollado bajo una premisa clara: la IA es
+            una herramienta de precisión, no un sustituto del criterio
+            profesional. Al igual que un arquitecto diseña cada plano antes
+            de que la maquinaria entre en acción, aquí cada decisión de
+            diseño, cada patrón y cada abstracción fue definida
+            deliberadamente por el desarrollador. La IA aceleró la
+            construcción, pero nunca decidió dónde iban los cimientos.
           </p>
           <p className="text-gray-300">
-            Cada decisión arquitectónica, cada patrón de diseño y cada
-            abstracción fue elegida deliberadamente por un desarrollador con
-            criterio. La IA es una herramienta poderosa, pero las herramientas
-            no reemplazan el conocimiento.
+            Las herramientas evolucionan, pero los fundamentos permanecen.
+            Dominar la arquitectura, los patrones de diseño y los principios
+            de ingeniería es lo que permite dirigir cualquier herramienta con
+            criterio — hoy es IA, mañana será otra cosa. El conocimiento no
+            se delega.
           </p>
         </section>
 
