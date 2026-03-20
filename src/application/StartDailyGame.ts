@@ -4,10 +4,13 @@ import type { GameDate } from '@domain/model/GameDate.ts'
 import { Game } from '@domain/model/Game.ts'
 
 export class StartDailyGame {
-  constructor(
-    private readonly gameRepo: IGameRepository,
-    private readonly challengeGenerator: IChallengeGenerator,
-  ) {}
+  private readonly gameRepo: IGameRepository
+  private readonly challengeGenerator: IChallengeGenerator
+
+  constructor(gameRepo: IGameRepository, challengeGenerator: IChallengeGenerator) {
+    this.gameRepo = gameRepo
+    this.challengeGenerator = challengeGenerator
+  }
 
   execute(date: GameDate): Game {
     const existing = this.gameRepo.loadByDate(date)
