@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://emoji-wordle.vercel.app/sitemap.xml
+Sitemap: https://emoji-game-v2.vercel.app/sitemap.xml
