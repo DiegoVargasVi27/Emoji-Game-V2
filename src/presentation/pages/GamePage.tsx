@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { useGame } from '@presentation/hooks/useGame.ts'
 import { Emoji } from '@domain/model/Emoji.ts'
 import { GameBoard } from '@presentation/components/Board/GameBoard.tsx'
 import { EmojiKeyboard } from '@presentation/components/Keyboard/EmojiKeyboard.tsx'
 import { ResultModal } from '@presentation/components/modals/ResultModal.tsx'
 import { StatsModal } from '@presentation/components/modals/StatsModal.tsx'
+import { ShareModal } from '@presentation/components/modals/ShareModal.tsx'
 import { useShareResult } from '@presentation/hooks/useShareResult.ts'
 import { AdBanner } from '@presentation/components/ads/AdBanner.tsx'
 
@@ -25,9 +27,11 @@ export function GamePage() {
     isWinBouncing,
     clearShake,
     revealedKeyStatuses,
+    getGame,
   } = useGame()
 
-  const { shareResult, copied } = useShareResult(null)
+  const { shareResult, copied } = useShareResult(getGame())
+  const [showShareModal, setShowShareModal] = useState(false)
 
   if (isLoading) {
     return (
@@ -94,11 +98,19 @@ export function GamePage() {
           attemptsUsed={viewModel.attemptsUsed}
           maxAttempts={viewModel.maxAttempts}
           answer={viewModel.answer}
-          onShare={shareResult}
+          onShare={() => setShowShareModal(true)}
           copied={copied}
           onClose={toggleResultModal}
         />
       )}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        onShare={(name) => {
+          void shareResult(name)
+          setShowShareModal(false)
+        }}
+      />
       {showStatsModal && stats && (
         <StatsModal stats={stats} onClose={toggleStatsModal} />
       )}

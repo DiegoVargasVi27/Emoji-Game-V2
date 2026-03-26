@@ -20,6 +20,7 @@ export function useGame() {
   const isWinBouncing = useStore(gameStore, (s) => s.isWinBouncing)
   const clearShake = useStore(gameStore, (s) => s.clearShake)
   const revealedKeyStatuses = useStore(gameStore, (s) => s.revealedKeyStatuses)
+  const getGame = useStore(gameStore, (s) => s.getGame)
 
   useEffect(() => {
     void startGame()
@@ -42,5 +43,6 @@ export function useGame() {
     isWinBouncing,
     clearShake,
     revealedKeyStatuses,
+    getGame,
   }
 }
