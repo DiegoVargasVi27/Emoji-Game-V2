@@ -34,6 +34,7 @@ export interface GameActions {
   toggleStatsModal(): void
   loadStats(): Promise<void>
   clearShake(): void
+  getGame(): Game | null
 }
 
 export type GameStore = GameState & GameActions
@@ -202,6 +203,10 @@ export function createGameStore(useCases: UseCases) {
 
     clearShake() {
       set({ isShaking: false })
+    },
+
+    getGame() {
+      return currentGame
     },
 
     toggleResultModal() {
